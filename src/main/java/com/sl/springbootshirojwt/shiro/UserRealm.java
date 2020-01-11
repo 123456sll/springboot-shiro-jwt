@@ -7,6 +7,7 @@ import com.sl.springbootshirojwt.entity.User;
 import com.sl.springbootshirojwt.service.IPermissionService;
 import com.sl.springbootshirojwt.service.IRoleService;
 import com.sl.springbootshirojwt.service.IUserService;
+import com.sl.springbootshirojwt.util.JWTUtil;
 import com.sl.springbootshirojwt.util.MD5Util;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
@@ -31,13 +32,15 @@ public class UserRealm extends AuthorizingRealm {
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-        SimpleAuthorizationInfo simpleAuthorizationInfo=new SimpleAuthorizationInfo();
+        SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
         User user = (User) SecurityUtils.getSubject().getPrincipal();
-        List<Role> roles=roleService.getUserRoles(user.getId());
-        for (Role r:roles){
+        List<Role> roles = roleService.getUserRoles(user.getId());
+        /*Integer userId = JWTUtil.getUserId(principalCollection.toString());
+        List<Role> roles = roleService.getUserRoles(userId);*/
+        for (Role r : roles) {
             simpleAuthorizationInfo.addRole(r.getName());
-            List<Permission> permissions=permissionService.getRolePermissions(r.getId());
-            for (Permission p:permissions){
+            List<Permission> permissions = permissionService.getRolePermissions(r.getId());
+            for (Permission p : permissions) {
                 simpleAuthorizationInfo.addStringPermission(p.getPerCode());
             }
         }

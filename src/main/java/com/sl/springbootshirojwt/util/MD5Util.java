@@ -54,12 +54,12 @@ public class MD5Util {
         }
     }
 
-   /* public static void main(String[] args) {
+    public static void main(String[] args) {
         String salt=getSalt();
         System.out.println(salt);
         System.out.println(encryptBySalt("123456",salt));
-        String key = "your key";
+        String key = "8c8875d58b2a70c604010e8b1ca63390";
         byte[] keyByte = key.getBytes(StandardCharsets.UTF_8);
         System.out.println(Base64Utils.encodeToString(Arrays.copyOf(keyByte, 16)));
-    }*/
+    }
 }

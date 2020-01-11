@@ -1,5 +1,6 @@
 package com.sl.springbootshirojwt.shiro;
 
+import com.sl.springbootshirojwt.shiro.jwt.JwtFilter;
 import org.apache.shiro.codec.Base64;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
@@ -34,6 +35,7 @@ public class ShiroConfig {
 
     /**
      * cookie管理对象
+     *
      * @return
      */
    /* public CookieRememberMeManager rememberMeManager() {
@@ -43,7 +45,6 @@ public class ShiroConfig {
         cookieRememberMeManager.setCipherKey(Base64.decode("123456"));
         return cookieRememberMeManager;
     }*/
-
     @Bean
     public ShiroFilterFactoryBean shiroFilterFactoryBean(SecurityManager securityManager) {
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
@@ -59,6 +60,7 @@ public class ShiroConfig {
         Map<String, Filter> filters = shiroFilterFactoryBean.getFilters();
         filters.put("authc", new ShiroLoginFilter());
         filters.put("logout", new ShiroLogoutFilter());
+        filters.put("jwt", new JwtFilter());
 
         LinkedHashMap<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
 
@@ -75,7 +77,7 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/sys/login", "anon");
         filterChainDefinitionMap.put("/sys/register", "anon");
         // 除上以外所有url都必须认证通过才可以访问，未通过认证自动访问LoginUrl
-        filterChainDefinitionMap.put("/**", "authc");
+        filterChainDefinitionMap.put("/**", "jwt");
 
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         return shiroFilterFactoryBean;
