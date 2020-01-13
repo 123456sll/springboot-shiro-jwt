@@ -2,6 +2,8 @@ package com.sl.springbootshirojwt.shiro;
 
 import com.sl.springbootshirojwt.shiro.jwt.JwtFilter;
 import org.apache.shiro.codec.Base64;
+import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
+import org.apache.shiro.mgt.DefaultSubjectDAO;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
@@ -58,8 +60,8 @@ public class ShiroConfig {
         shiroFilterFactoryBean.setUnauthorizedUrl("/403");
 
         Map<String, Filter> filters = shiroFilterFactoryBean.getFilters();
-        filters.put("authc", new ShiroLoginFilter());
-        filters.put("logout", new ShiroLogoutFilter());
+        // filters.put("authc", new ShiroLoginFilter());
+        // filters.put("logout", new ShiroLogoutFilter());
         filters.put("jwt", new JwtFilter());
 
         LinkedHashMap<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
@@ -72,7 +74,7 @@ public class ShiroConfig {
         // druid数据源监控页面不拦截
         filterChainDefinitionMap.put("/druid/**", "anon");
         // 配置退出过滤器，其中具体的退出代码Shiro已经替我们实现了
-        filterChainDefinitionMap.put("/sys/logout", "logout");
+        // filterChainDefinitionMap.put("/sys/logout", "logout");
         filterChainDefinitionMap.put("/", "anon");
         filterChainDefinitionMap.put("/sys/login", "anon");
         filterChainDefinitionMap.put("/sys/register", "anon");
@@ -89,6 +91,12 @@ public class ShiroConfig {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         securityManager.setRealm(userRealm());
         // securityManager.setRememberMeManager(rememberMeManager());
+        // 关闭Shiro自带的session
+        DefaultSubjectDAO subjectDAO = new DefaultSubjectDAO();
+        DefaultSessionStorageEvaluator defaultSessionStorageEvaluator = new DefaultSessionStorageEvaluator();
+        defaultSessionStorageEvaluator.setSessionStorageEnabled(false);
+        subjectDAO.setSessionStorageEvaluator(defaultSessionStorageEvaluator);
+        securityManager.setSubjectDAO(subjectDAO);
         return securityManager;
     }
 

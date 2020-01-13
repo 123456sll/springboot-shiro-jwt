@@ -3,8 +3,11 @@ package com.sl.springbootshirojwt.common.exception;
 import com.alibaba.fastjson.JSONObject;
 import com.sl.springbootshirojwt.common.bean.ResultBean;
 import com.sl.springbootshirojwt.common.enums.ResultCode;
+import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authz.AuthorizationException;
+import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.UnauthorizedException;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.BindException;
@@ -53,13 +56,9 @@ public class GlobalExceptionHandler {
         return resultBean;
     }
 
-    @ExceptionHandler(AuthorizationException.class)
-    public ResultBean<JSONObject> handle(UnauthorizedException exception) {
-        JSONObject jsonObject = new JSONObject();
-        logger.error(exception.getMessage());
-        ResultBean<JSONObject> resultBean = new ResultBean<>(ResultCode.FORBIDDEN.getCode(), "未经授权！", jsonObject);
-        return resultBean;
-    }
+
+
+
 
 
 }

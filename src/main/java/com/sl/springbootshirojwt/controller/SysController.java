@@ -14,10 +14,12 @@ import org.apache.shiro.subject.Subject;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotEmpty;
 
@@ -29,7 +31,7 @@ public class SysController {
     @Autowired
     private IUserService userService;
 
-    @PostMapping("/login")
+    /*@PostMapping("/login")
     public ResultBean<JSONObject> login(@NotEmpty(message = "用户名不能为空") String username,
                                         @Length(min = 6, message = "密码长度不能低于6位") @NotEmpty(message = "密码不能为空") String password,
                                         HttpServletResponse response) {
@@ -51,9 +53,9 @@ public class SysController {
         } catch (AuthenticationException e) {
             return new ResultBean<>(ResultCode.FAIL.getCode(), "认证失败！", new JSONObject());
         }
-    }
+    }*/
 
-    /*@PostMapping("/login")
+    @PostMapping("/login")
     public ResultBean<JSONObject> login(@NotEmpty(message = "用户名不能为空") String username,
                                         @Length(min = 6, message = "密码长度不能低于6位") @NotEmpty(message = "密码不能为空") String password,
                                         HttpServletResponse response) {
@@ -65,7 +67,7 @@ public class SysController {
         response.setHeader("Authorization", JWTUtil.sign(user.getUsername(), user.getId()));
         response.setHeader("Access-Control-Expose-Headers", "Authorization");
         return resultBean;
-    }*/
+    }
 
     @PostMapping("/register")
     public ResultBean<JSONObject> register(@Validated User user) {
@@ -73,6 +75,14 @@ public class SysController {
         if (!userService.register(user)) {
             resultBean.setCode(ResultCode.FAIL.getCode()).setMsg("用户名重复！");
         }
+        return resultBean;
+    }
+
+    @GetMapping("/logout")
+    public ResultBean<JSONObject> logout(HttpServletRequest request, HttpServletResponse response) {
+        ResultBean<JSONObject> resultBean = new ResultBean<>();
+        response.setHeader("Authorization", null);
+        response.setHeader("Access-Control-Expose-Headers", "Authorization");
         return resultBean;
     }
 
